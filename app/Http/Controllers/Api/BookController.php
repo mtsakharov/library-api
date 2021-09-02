@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Book\AttachUserToBookRequest;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Repository\Eloquent\BookRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class BookController extends Controller
@@ -29,81 +31,103 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function index(): Response
+    public function index(): JsonResponse
     {
-        $books = $this->repository->all([], ['author', 'librarian']);
+        $books = $this->repository->all()->forPage(1, 10);
         if (!$books) {
             return response()->error('Book collection not found', Response::HTTP_NOT_FOUND);
         }
 
-        return response()->success(BookResource::collection($books))->get();
+        return response()->success(BookResource::collection($books));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreBookRequest  $request
-     * @return Response
+     * @param StoreBookRequest $request
+     * @return JsonResponse
      */
-    public function store(StoreBookRequest $request): Response
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $books = $this->repository->create($request->all());
         if (!$books) {
             return response()->error('Unprocessable Entity', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return response()->success(new BookResource($books))->get();
+        return response()->success(new BookResource($books));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  Book  $book
-     * @return Response
+     * @param Book $book
+     * @return JsonResponse
      */
-    public function show(Book $book): Response
+    public function show(Book $book): JsonResponse
     {
         if (!$book->exists()) {
             return response()->error('Book model not found', Response::HTTP_NOT_FOUND);
         }
 
-        return response()->success(new BookResource($book))->get();
+        return response()->success(new BookResource($book));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateBookRequest  $request
-     * @param  Book  $book
-     * @return void
+     * @param UpdateBookRequest $request
+     * @param Book $book
+     * @return JsonResponse
      */
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        $book = $this->repository->update($book->getKey(), $request->all());
+        $this->repository->update($book->getKey(), $request->all());
 
-        return response()->success(new BookResource($book))->get();
+        return response()->success('model successfully updated');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Book  $book
-     * @return Response
+     * @param Book $book
+     * @return JsonResponse
      */
-    public function destroy(Book $book): Response
+    public function destroy(Book $book): JsonResponse
     {
         $this->repository->deleteById($book->getKey());
 
-        return response()->success('Book model successfully deleted')->get();
+        return response()->success('Book model successfully deleted');
     }
 
-    public function attachBookToUser(Book $book)
+    /**
+     * @param AttachUserToBookRequest $request
+     * @param Book $book
+     * @return void
+     */
+    public function getBookFromLibrarian(AttachUserToBookRequest $request, Book $book)
     {
         if (!$book->exists()) {
             return response()->error('Book model not found', Response::HTTP_NOT_FOUND);
         }
 
+        if ($request->user()->notReturnedBooks()) {
+            return response()->error('Access denied', Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+
+        $this->repository->attachReaderToBook($book->getKey(), $request->user()->id, $request->to);
+
+        return response()->success('Book model successfully attached');
+    }
+
+    public function returnBookToLibrary(AttachUserToBookRequest $request, Book $book)
+    {
+        if (!$book->exists()) {
+            return response()->error('Book model not found', Response::HTTP_NOT_FOUND);
+        }
+
+
+        return response()->success('Book model successfully attached');
     }
 }

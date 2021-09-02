@@ -15,8 +15,6 @@ class LibrarianSeeder extends Seeder
      */
     public function run()
     {
-        Librarian::factory(2)->create()->each(function ($librarian) {
-            $librarian->books()->saveMany(Book::factory(50)->create());
-        });
+        Librarian::factory(2)->create();
     }
 }

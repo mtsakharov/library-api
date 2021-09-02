@@ -7,6 +7,7 @@ namespace App\Repository\Eloquent;
 use App\Models\User;
 use App\Repository\UserRepositoryInterface;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -19,10 +20,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * UserRepository constructor.
      * @param  User  $user
      */
-    public function __construct(User $user)
+    #[Pure] public function __construct(User $user)
     {
-        parent::__construct($user);
+        $this->user = $user;
 
+        parent::__construct($user);
     }
 
     /**

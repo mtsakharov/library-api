@@ -51,8 +51,8 @@ class LoginController extends Controller implements LoginContractInterface
     }
 
     /**
-     * @param  Request  $request
-     * @return UserResource
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getRequestUser(Request $request): JsonResponse
     {
@@ -60,8 +60,8 @@ class LoginController extends Controller implements LoginContractInterface
     }
 
     /**
-     * @param  Request  $request
-     * @return Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {

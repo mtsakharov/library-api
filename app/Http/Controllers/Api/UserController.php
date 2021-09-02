@@ -9,6 +9,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repository\Eloquent\UserRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
@@ -30,9 +31,9 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function index(): Response
+    public function index(): JsonResponse
     {
         $users = $this->repository->all([], ['books'])->forPage(1, 10);
         if (!$users) {
@@ -45,10 +46,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreUserRequest  $request
-     * @return Response
+     * @param StoreUserRequest $request
+     * @return JsonResponse
      */
-    public function store(StoreUserRequest $request): Response
+    public function store(StoreUserRequest $request): JsonResponse
     {
         $user = $this->repository->create($request->all());
         if (!$user){
@@ -61,10 +62,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  User  $user
-     * @return Response
+     * @param User $user
+     * @return JsonResponse
      */
-    public function show(User $user): Response
+    public function show(User $user): JsonResponse
     {
         if (!$user) {
             return response()->error('User model not found', Response::HTTP_NOT_FOUND);
@@ -76,11 +77,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateUserRequest  $request
-     * @param  User  $user
-     * @return Response
+     * @param UpdateUserRequest $request
+     * @param User $user
+     * @return JsonResponse
      */
-    public function update(UpdateUserRequest $request, User $user): Response
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $user = $this->repository->update($user->getKey(), $request->all());
         if (!$user) {
@@ -88,19 +89,19 @@ class UserController extends Controller
 
         }
 
-        return response()->success(new UserRepository($user))->get();
+        return response()->success(new UserResource($user));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  User  $user
-     * @return Response
+     * @param User $user
+     * @return JsonResponse
      */
-    public function destroy(User $user): Response
+        public function destroy(User $user): JsonResponse
     {
         $this->repository->deleteById($user->getKey());
 
-        return response()->success('Librarian model successfully deleted')->get();
+        return response()->success('User model successfully deleted');
     }
 }

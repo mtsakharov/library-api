@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class LibrarianTest extends TestCase
+class LibrarianControllerTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -18,30 +18,5 @@ class LibrarianTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-    }
-
-    public function test_all()
-    {
-
-    }
-
-    public function test_store()
-    {
-
-    }
-
-    public function test_show()
-    {
-
-    }
-
-    public function test_update()
-    {
-
-    }
-
-    public function test_destroy()
-    {
-
     }
 }

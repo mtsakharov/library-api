@@ -4,21 +4,11 @@
 namespace App\Repository;
 
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface BookRepositoryInterface
 {
-    /**
-     * Get author of the book
-     *
-     * @return Collection
-     */
-    public function author(): Collection;
+    public function getBookFromLibrary(int $bookId, int $userId, string $to);
 
-    /**
-     * Get the book readers
-     *
-     * @return Collection
-     */
-    public function readers(): Collection;
+    public function returnBookToLibrary(int $bookId, int $userId);
 }

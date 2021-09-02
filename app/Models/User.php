@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -41,4 +44,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * @return BelongsToMany
+     */
+    public function books(): BelongsToMany
+    {
+        return $this->belongsToMany(Book::class, 'book_user');
+    }
+
+    /**
+     * @return Collection
+     */
+    public function notReturnedBooks(): Collection
+    {
+        return $this->books()
+            ->where('returned', '=', 0)
+            ->where('to', '<', Carbon::now())
+            ->get();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Book;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 
 class StoreBookRequest extends FormRequest
 {
@@ -11,9 +12,9 @@ class StoreBookRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,10 +22,23 @@ class StoreBookRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            //
+            'title' => 'required',
+            'cover' => 'required',
+            'author_id' => 'required',
+            'librarian_id' => 'required',
         ];
+    }
+
+    /**
+     * Always return JSON.
+     * @param array $errors
+     * @return JsonResponse
+     */
+    public function response(array $errors): JsonResponse
+    {
+        return response()->json($errors, 422);
     }
 }

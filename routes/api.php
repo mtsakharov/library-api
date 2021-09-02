@@ -19,6 +19,8 @@ Route::post('forgot-password', [\App\Http\Controllers\Api\Auth\ForgotResetContro
 Route::post('reset-password', [\App\Http\Controllers\Api\Auth\ForgotResetController::class, 'reset'])->name('reset');
 Route::middleware('auth:sanctum')->group(function (){
     Route::post('logout', [\App\Http\Controllers\Api\Auth\LoginController::class, 'logout'])->name('logout');
+    Route::post('books/{book}/get', [\App\Http\Controllers\Api\BookController::class, 'getBookFromLibrarian']);
+    Route::post('books/{book}/return', [\App\Http\Controllers\Api\BookController::class, 'returnBookToLibrarian']);
     Route::apiResources([
         'authors' => \App\Http\Controllers\Api\AuthorController::class,
         'books' => \App\Http\Controllers\Api\BookController::class,

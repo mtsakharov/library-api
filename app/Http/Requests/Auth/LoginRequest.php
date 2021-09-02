@@ -14,7 +14,7 @@ class LoginRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,7 +24,7 @@ class LoginRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email' => 'required|email|max:255',
@@ -46,12 +46,12 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Always return JSON.
      * @param array $errors
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function response(array $errors): JsonResponse
     {
-        // Always return JSON.
         return response()->json($errors, 422);
     }
 }

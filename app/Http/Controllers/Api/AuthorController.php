@@ -9,6 +9,7 @@ use App\Http\Requests\Author\UpdateAuthorRequest;
 use App\Http\Resources\AuthorResource;
 use App\Models\Author;
 use App\Repository\Eloquent\AuthorRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class AuthorController extends Controller
@@ -69,32 +70,32 @@ class AuthorController extends Controller
             return response()->error('Model not found', Response::HTTP_NOT_FOUND);
         }
 
-        return response()->success(new AuthorRepository($author))->get();
+        return response()->success(new AuthorRepository($author));
     }
 
 
     /**
      * @param  UpdateAuthorRequest  $request
      * @param  Author  $author
-     * @return void
+     * @return JsonResponse
      */
-    public function update(UpdateAuthorRequest $request, Author $author)
+    public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
         $author = $this->repository->update($author->getKey(), $request->all());
 
-        return response()->success(new AuthorRepository($author))->get();
+        return response()->success(new AuthorResource($author));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Author  $author
-     * @return Response
+     * @param Author $author
+     * @return JsonResponse
      */
-    public function destroy(Author $author)
+    public function destroy(Author $author): JsonResponse
     {
         $this->repository->deleteById($author->getKey());
 
-        return response()->success('Author model successfully deleted')->get();
+        return response()->success('Author model successfully deleted');
     }
 }
